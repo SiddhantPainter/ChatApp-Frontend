@@ -8,7 +8,7 @@ import * as yup from "yup";
 import io from "socket.io-client";
 import "./ChatRoomPage.css";
 import { getChatRoomMessages, getChatRooms } from "./requests";
-const SOCKET_IO_URL = "http://localhost:3000";
+const SOCKET_IO_URL = "https://salty-waters-87686.herokuapp.com";
 const socket = io(SOCKET_IO_URL);
 const getChatData = () => {
   return JSON.parse(localStorage.getItem("chatData"));
@@ -20,7 +20,7 @@ function ChatRoomPage() {
   const [initialized, setInitialized] = useState(false);
   const [messages, setMessages] = useState([]);
   const [rooms, setRooms] = useState([]);
-  const handleSubmit = async evt => {
+  const handleSubmit = async (evt) => {
     const isValid = await schema.validate(evt);
     if (!isValid) {
       return;
@@ -32,10 +32,10 @@ function ChatRoomPage() {
     socket.emit("message", data);
   };
   const connectToRoom = () => {
-    socket.on("connect", data => {
+    socket.on("connect", (data) => {
       socket.emit("join", getChatData().chatRoomName);
     });
-    socket.on("newMessage", data => {
+    socket.on("newMessage", (data) => {
       getMessages();
     });
     setInitialized(true);
@@ -51,7 +51,7 @@ function ChatRoomPage() {
     setInitialized(true);
   };
   useEffect(() => {
-   if (!initialized) {
+    if (!initialized) {
       getMessages();
       connectToRoom();
       getRooms();
@@ -76,7 +76,11 @@ function ChatRoomPage() {
           );
         })}
       </div>
-      <Formik initialValues={{}} validationSchema={schema} onSubmit={handleSubmit}>
+      <Formik
+        initialValues={{}}
+        validationSchema={schema}
+        onSubmit={handleSubmit}
+      >
         {({
           handleSubmit,
           handleChange,
