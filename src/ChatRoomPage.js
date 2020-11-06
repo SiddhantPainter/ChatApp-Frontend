@@ -8,8 +8,9 @@ import * as yup from "yup";
 import io from "socket.io-client";
 import "./ChatRoomPage.css";
 import { getChatRoomMessages, getChatRooms } from "./requests";
-const SOCKET_IO_URL = "https://salty-waters-87686.herokuapp.com";
-const socket = io(SOCKET_IO_URL);
+import constants from "./constants";
+
+const socket = io(constants.API_PATH);
 const getChatData = () => {
   return JSON.parse(localStorage.getItem("chatData"));
 };
