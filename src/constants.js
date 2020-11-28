@@ -1,5 +1,5 @@
 const constants = {
-  API_PATH: "https://salty-waters-87686.herokuapp.com",
+  API_PATH: "http://localhost:4000",
 };
 
 export default constants;

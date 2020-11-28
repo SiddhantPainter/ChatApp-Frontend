@@ -7,7 +7,7 @@ import Button from "react-bootstrap/Button";
 import * as yup from "yup";
 import io from "socket.io-client";
 import "./ChatRoomPage.css";
-import { getChatRoomMessages, getChatRooms } from "./requests";
+import { getAuctionMessages } from "./requests";
 import constants from "./constants";
 
 const socket = io(constants.API_PATH);
@@ -27,14 +27,14 @@ function ChatRoomPage() {
       return;
     }
     const data = Object.assign({}, evt);
-    data.chatRoomName = getChatData().chatRoomName;
-    data.author = getChatData().handle;
+    data.auctionId = getChatData().auctionId;
+    data.accountId = getChatData().accountId;
     data.message = evt.message;
     socket.emit("message", data);
   };
   const connectToRoom = () => {
     socket.on("connect", (data) => {
-      socket.emit("join", getChatData().chatRoomName);
+      socket.emit("join", getChatData().auctionId);
     });
     socket.on("newMessage", (data) => {
       getMessages();
@@ -42,34 +42,28 @@ function ChatRoomPage() {
     setInitialized(true);
   };
   const getMessages = async () => {
-    const response = await getChatRoomMessages(getChatData().chatRoomName);
+    const response = await getAuctionMessages(getChatData().auctionId);
     setMessages(response.data);
-    setInitialized(true);
-  };
-  const getRooms = async () => {
-    const response = await getChatRooms();
-    setRooms(response.data);
     setInitialized(true);
   };
   useEffect(() => {
     if (!initialized) {
       getMessages();
       connectToRoom();
-      getRooms();
     }
   });
   return (
     <div className="chat-room-page">
       <h1>
-        Chat Room: {getChatData().chatRoomName}. Chat Handle:{" "}
-        {getChatData().handle}
+        Bidding Auction: {getChatData().auctionId}. Bidding Account:{" "}
+        {getChatData().accountId}
       </h1>
       <div className="chat-box">
         {messages.map((m, i) => {
           return (
             <div className="col-12" key={i}>
               <div className="row">
-                <div className="col-2">{m.author}</div>
+                <div className="col-2">{m.accountId}</div>
                 <div className="col">{m.message}</div>
                 <div className="col-3">{m.createdAt}</div>
               </div>
@@ -93,7 +87,7 @@ function ChatRoomPage() {
         }) => (
           <Form noValidate onSubmit={handleSubmit}>
             <Form.Row>
-              <Form.Group as={Col} md="12" controlId="handle">
+              <Form.Group as={Col} md="12" controlId="accountId">
                 <Form.Label>Message</Form.Label>
                 <Form.Control
                   type="text"

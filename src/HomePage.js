@@ -5,27 +5,20 @@ import Form from "react-bootstrap/Form";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import * as yup from "yup";
-import { Redirect } from "react-router";
 import "./HomePage.css";
-import { joinRoom } from "./requests";
 const schema = yup.object({
-  handle: yup.string().required("Handle is required"),
-  chatRoomName: yup.string().required("Chat room is required"),
+  auctionId: yup.string().required("Auction ID is required"),
+  accountId: yup.string().required("Account ID is required"),
 });
-function HomePage() {
-  const [redirect, setRedirect] = useState(false);
-  const handleSubmit = async evt => {
-    const isValid = await schema.validate(evt);
+function HomePage({ history }) {
+  const handleSubmit = async (values) => {
+    const isValid = await schema.validate(values);
     if (!isValid) {
       return;
     }
-    localStorage.setItem("chatData", JSON.stringify(evt));
-    await joinRoom(evt.chatRoomName);
-    setRedirect(true);
+    localStorage.setItem("chatData", JSON.stringify(values));
+    history.push("/console");
   };
-  if (redirect) {
-    return <Redirect to="/chatroom" />;
-  }
   return (
     <div className="home-page">
       <h1>Join Chat</h1>
@@ -45,32 +38,32 @@ function HomePage() {
         }) => (
           <Form noValidate onSubmit={handleSubmit}>
             <Form.Row>
-              <Form.Group as={Col} md="12" controlId="handle">
-                <Form.Label>Handle</Form.Label>
+              <Form.Group as={Col} md="12" controlId="accountId">
+                <Form.Label>Account Id</Form.Label>
                 <Form.Control
                   type="text"
-                  name="handle"
-                  placeholder="Handle"
-                  value={values.handle || ""}
+                  name="accountId"
+                  placeholder="Account Id"
+                  value={values.accountId || ""}
                   onChange={handleChange}
-                  isInvalid={touched.handle && errors.handle}
+                  isInvalid={touched.accountId && errors.accountId}
                 />
                 <Form.Control.Feedback type="invalid">
                   {errors.firstName}
                 </Form.Control.Feedback>
               </Form.Group>
-              <Form.Group as={Col} md="12" controlId="chatRoomName">
-                <Form.Label>Chat Room Name</Form.Label>
+              <Form.Group as={Col} md="12" controlId="auctionId">
+                <Form.Label>Auction Id</Form.Label>
                 <Form.Control
                   type="text"
-                  name="chatRoomName"
-                  placeholder="Chat Room Name"
-                  value={values.chatRoomName || ""}
+                  name="auctionId"
+                  placeholder="Auction Id"
+                  value={values.auctionId || ""}
                   onChange={handleChange}
-                  isInvalid={touched.chatRoomName && errors.chatRoomName}
+                  isInvalid={touched.auctionId && errors.auctionId}
                 />
-<Form.Control.Feedback type="invalid">
-                  {errors.chatRoomName}
+                <Form.Control.Feedback type="invalid">
+                  {errors.auctionId}
                 </Form.Control.Feedback>
               </Form.Group>
             </Form.Row>
